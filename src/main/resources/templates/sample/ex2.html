@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<!--가독성이 좋고 jsp와 더 근접한 방법(forEach로 돌렸던 것 같은 방법) : th:block사용하기 -->
+<!--성능면에서 좋지는 않음 ( 여백이 많이 생김 )-->
+<ul>
+    <th:block th:each="dto , status:${list}">
+        <li th:class="${status.even ?'EVEN':'ODD'}">AAA</li>
+    </th:block>
+</ul>
+
+<ul>
+<!--    반복문을 돌리는 첫 번째 방법 : 반복하고 싶은 태그를 찾아서 돌린다.-->
+<!--    status라고 변수를 추가해줄 수 있다. 있어도 없어도 상관없음-->
+    <li th:each="dto, status: ${list}">
+        [[${status.index}]] ------ [[${dto}]]
+    </li>
+</ul>
+
+<!--날짜출력-->
+<ul>
+    <li th:each="dto, status: ${list}">
+        [[${dto.regdate}]] --- [[${#temporals.format(dto.regdate, 'yyyy/MM/dd')}]]
+    </li>
+</ul>
+
+<script th:inline="javascript">
+
+    const arr = [[${list}]]
+
+    console.log(arr[0].sno)
+
+</script>
+
+</body>
+</html>
