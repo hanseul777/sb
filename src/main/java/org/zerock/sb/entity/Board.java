@@ -18,8 +18,8 @@ import java.time.LocalDateTime;
 @ToString
 public class Board {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id //Entity는 Id를 기준으로 돌아가기 때문에 Id는 변경하면 x
+    @GeneratedValue(strategy = GenerationType.IDENTITY) //만들어지는 value값을 사용하고(T생성전략은 어떤거를 쓸건지 설정하는 것)
     private Long bno;
 
     private String title;
@@ -28,12 +28,13 @@ public class Board {
 
     private String writer;
 
-    @CreationTimestamp
+    @CreationTimestamp //등록 수정시간 자동으로 관리해주기
     private LocalDateTime regDate;
 
     @UpdateTimestamp
     private LocalDateTime modDate;
 
+    //제목과 내용을 한 번에 갱신, 수정 할 수 있는 메서드를 생성
     public void change(String title, String content){
         this.title = title;
         this.content = content;
