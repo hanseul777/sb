@@ -8,7 +8,39 @@
 <body>
 
 <div layout:fragment="content">
+    <!--    <div>-->
+    <!--        <table>-->
+    <!--            <tr>-->
+    <!--                <td>BNO</td>-->
+    <!--                <td>TITLE</td>-->
+    <!--                <td>WRITER</td>-->
+    <!--                <td>REGDATE</td>-->
+    <!--            </tr>-->
+    <!--            <tr th:each="dto: ${responseDTO.dtoList}">-->
+    <!--                <td th:text="${dto.bno}"></td>-->
+    <!--                <td th:text="${dto.title}"></td>-->
+    <!--                <td th:text="${dto.writer}"></td>-->
+    <!--                <td th:text="${dto.regDate}"></td>-->
+    <!--            </tr>-->
+    <!--        </table>-->
+    <!--    </div>-->
 
+    <!--    &lt;!&ndash; 페이징 &ndash;&gt;-->
+    <!--    <div>-->
+    <!--        <ul class="pagination">-->
+    <!--            <li class="page-item" th:if="${responseDTO.prev}">-->
+    <!--                <a class="page-link" href="#" tabindex="-1">Previous</a>-->
+    <!--            </li>-->
+
+    <!--            <li class="page-item" th:each="num: ${#numbers.sequence( responseDTO.start , responseDTO.end)}">-->
+    <!--                <a class="page-link" href="#">[[${num}]]</a>-->
+    <!--            </li>-->
+
+    <!--            <li class="page-item" th:if="${responseDTO.next}">-->
+    <!--                <a class="page-link" href="#">Next</a>-->
+    <!--            </li>-->
+    <!--        </ul>-->
+    <!--    </div>-->
     <div class="card-body">
 
         <div class="float-end" >
@@ -37,7 +69,9 @@
             <tbody>
             <tr th:each="board:${responseDTO.dtoList}">
                 <th scope="row">[[${board.bno}]]</th>
-                <td><a th:href="|javascript:movePage(${responseDTO.page}, ${board.bno} )|">[[${board.title}]]</a>  </td>
+                <td><a th:href="|javascript:movePage(${responseDTO.page}, ${board.bno} )|">[[${board.title}]]</a>
+                    [[${board.replyCount}]]
+                </td>
                 <td>[[${ board.writer}]]</td>
                 <td>[[${#temporals.format(board.regDate, 'yyyy/MM/dd')}]]</td>
             </tr>
@@ -68,9 +102,6 @@
         </ul>
 
     </div>
-
-
-
 
 </div>
 
@@ -147,3 +178,6 @@
 
 
 </th:block>
+
+</body>
+</html>

@@ -4,6 +4,11 @@ import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.transaction.annotation.Transactional;
 import org.zerock.sb.entity.Board;
 import org.zerock.sb.entity.Reply;
 
@@ -40,6 +45,8 @@ public class ReplyRepositoryTests {
 
         });//outer loop
     }
+
+    @Transactional
     @Test
     public void testRead(){
         Long rn = 1L;
@@ -47,10 +54,12 @@ public class ReplyRepositoryTests {
         Reply reply = replyRepository.findById(rn).get();
 
         log.info(reply);
+
+        log.info(reply.getBoard());
     }
     //테스트를 진행해보면 noSession이라고 뜬다
     // 실행 후 쿼리문을 보면 reply테이블을 뒤져서 reply의 ToString만 가지고 오는 것을 확인이 가능하다.
-    // board의 ToString도 가지고 와야하는데 lazy상태여서 board는 가지고 오지 못한다.
+    // board의 ToString도 가지고 와야하는데 lazy상태여서 board는 가지고 오지 못한다. -> ToString 예외 걸어주기
 
     @Test
     public void testByBno(){
@@ -60,5 +69,17 @@ public class ReplyRepositoryTests {
                 = replyRepository.findReplyByBoard_BnoOrderByRno(bno);
 
         replyList.forEach(reply -> log.info(reply));
+    }
+
+    @Test
+    public void testListOfBoard(){
+        Pageable pageable =
+                PageRequest.of(0,10, Sort.by("rno").descending());
+
+        Page<Reply> result = replyRepository.getListByBno(197L,pageable);
+
+        log.info(result.getTotalElements());
+
+        result.get().forEach(reply -> log.info(reply));//화면이 여러개라서 forEach
     }
 }

@@ -65,4 +65,20 @@ public class BoardRepositoryTests {
         });
 
     }
+
+    @Test
+    public void testSearchWithReplyCount(){
+
+        //검색조건 주기
+        char[] typeArr = {'T'};
+        String keyword = "10";
+        Pageable pageable = PageRequest.of(0,10,Sort.by("bno").descending());
+
+        Page<Object[]> result = boardRepository.searchWithReplyCount(typeArr,keyword,pageable);
+        log.info("total: " + result.getTotalElements());
+
+        result.get().forEach(arr ->{
+            log.info(Arrays.toString(arr));
+        });
+    }
 }
