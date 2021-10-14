@@ -82,4 +82,38 @@ public class ReplyRepositoryTests {
 
         result.get().forEach(reply -> log.info(reply));//화면이 여러개라서 forEach
     }
+
+    @Test
+    public void testCountOfBoard(){
+        Long bno = 198L;
+
+        int count = replyRepository.getReplyCountOfBoard(bno);
+        int lastPage = (int)(Math.ceil(count/10.0));
+
+        //121/10.0 = 13 => 13*10 = 130 => limit 110,120
+        //한페이지당 10개씩 뿌린다고 가정
+//        int lastpageNum = ((int)Math.ceil(count / (double)10));
+////        log.info(lastpageNum); //12
+//
+//        int lastEnd = lastpageNum * 10;
+//        int lastStart = lastEnd - 10;
+//        log.info(lastStart + " : " + lastEnd);
+
+        //Pageable pageable = PageRequest.of(lastPage<=0?0: lastPage -1,10);
+        if(lastPage ==0){
+            lastPage = 1;
+        }
+
+        //of()안에는 0부터 시작하는 페이지 번호, 사이즈, 소트가 들어간다.
+        Pageable pageable = PageRequest.of(lastPage -1,10);
+
+        Page<Reply> result = replyRepository.getListByBno(bno,pageable); //해당게시글의 댓글의 목록을 가지고와야해서 findAll사용 X
+
+        log.info("total : " + result.getTotalElements());
+        log.info("====="+result.getTotalPages());
+
+        result.get().forEach(reply -> {
+            log.info(reply);
+        });
+    }
 }

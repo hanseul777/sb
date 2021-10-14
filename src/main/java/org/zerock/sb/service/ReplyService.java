@@ -9,4 +9,6 @@ import org.zerock.sb.dto.ReplyDTO;
 public interface ReplyService {
 
     PageResponseDTO<ReplyDTO> getListOfBoard(Long bno, PageRequestDTO pageRequestDTO);
+
+    Long register(ReplyDTO replyDTO);
 }

@@ -55,7 +55,55 @@
       </div>
     </div>
   </div>
+  <!-- end card-->
+    <div class="card">
+      <div class="card-header">
+
+      </div>
+      <div class="card-body">
+        <div class="input-group mb-3">
+          <span class="input-group-text">Replyer</span>
+          <input type="text" name="replyer" class="form-control">
+        </div>
+        <div class="input-group mb-3">
+          <span class="input-group-text">ReplyText</span>
+          <input type="text" name="replyText" class="form-control">
+        </div>
+        <button class="btn btn-primary" onclick="registerReply()">Reply Register</button>
+      </div>
+      <div class="card-footer">
+
+      </div>
+    </div>
+
+
+  <div class="card">
+    <div class="card-header">Replies</div>
+    <div class="card-body">
+      <ul class="list-group replyUL">
+
+      </ul>
+      <div class="card-body">
+
+      </div>
+      <ul class="pagination">
+        <li class="page-item disabled">
+          <a class="page-link" href="#" tabindex="-1">Previous</a>
+        </li>
+        <li class="page-item"><a class="page-link" href="#">1</a></li>
+        <li class="page-item active">
+          <a class="page-link" href="#">2 <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="page-item"><a class="page-link" href="#">3</a></li>
+        <li class="page-item">
+          <a class="page-link" href="#">Next</a>
+        </li>
+      </ul>
+
+    </div>
+  </div>
 </div>
+
 <th:block  layout:fragment="script">
 
   <script th:inline="javascript">
@@ -92,6 +140,84 @@
       self.location=`/board/list?page=${page}&size=${size}` + searchQuery
 
     }
+
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+  <script th:inline="javascript">
+
+    const bno = [[${dto.bno}]]
+
+    function makeListAndPaging(replyPageResponse){
+
+      const dtoList = replyPageResponse.dtoList
+
+      console.log(dtoList)
+
+      let str = ""
+
+      for (const reply of dtoList) {
+        console.log(reply)
+        str += "<li class='list-group-item d-flex justify-content-between align-items-center'>"
+        str += `<div><span>${reply.rno} ---------- ${reply.replyText}</span></div>`
+        str += "</li>"
+
+      }
+      console.log(str)
+      document.querySelector(".replyUL").innerHTML = str
+
+      //paging
+      const pagination = document.querySelector(".pagination")
+      let pageStr = ""
+
+      //prev
+      if(replyPageResponse.prev){
+        pageStr += `<li class="page-item"><a class="page-link" href="javascript:getList(${replyPageResponse.start -1})" tabindex="-1">Previous</a></li>`
+      }
+      //num
+      for(let i = replyPageResponse.start; i<= replyPageResponse.end; i++){
+        pageStr += `<li class="page-item ${i==replyPageResponse.page?"active":""} "><a class="page-link" href="javascript:getList(${i})" tabindex="-1">${i}</a></li>`
+      }
+      //i==replyPageResponse.page : 현재페이지
+      //"active" : 활성화
+
+      //next
+      if(replyPageResponse.next){
+        pageStr += `<li class="page-item"><a class="page-link" href="javascript:getList(${replyPageResponse.end + 1})" tabindex="-1">Next</a></li>`
+      }
+
+      pagination.innerHTML = pageStr
+    }
+
+    async function getList(pageNum) {
+
+      const response = await axios.get(`/replies/list/${bno}?page=${pageNum}`)
+      const replyPageResponse = await response.data
+      console.log(replyPageResponse)
+
+      makeListAndPaging(replyPageResponse)
+    }
+
+    function registerReply(){
+      const replyObj = {bno:bno,
+        replyer: document.querySelector("input[name='replyer']").value,
+        replyText: document.querySelector("input[name='replyText']").value
+      }
+
+      async function registerAjx(){
+        const response = await axios.post("/replies",replyObj)
+        const replyPageResponse = await response.data
+        //데이터 가져오기
+        makeListAndPaging(replyPageResponse)
+        document.querySelector("input[name='replyer']").value =""
+        document.querySelector("input[name='replyText']").value =""
+      }
+      //호출
+      registerAjx();
+    }
+
+    getList(-1)
 
   </script>
 </th:block>

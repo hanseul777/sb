@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.zerock.sb.dto.PageRequestDTO;
 import org.zerock.sb.dto.PageResponseDTO;
 import org.zerock.sb.dto.ReplyDTO;
+import org.zerock.sb.entity.Board;
 import org.zerock.sb.entity.Reply;
 import org.zerock.sb.repository.ReplyRepository;
 
@@ -28,8 +29,17 @@ public class ReplyServiceImpl implements ReplyService{
     @Override
     public PageResponseDTO<ReplyDTO> getListOfBoard(Long bno, PageRequestDTO pageRequestDTO) {
 
-        Pageable pageable = PageRequest.of(pageRequestDTO.getPage() -1, pageRequestDTO.getSize(),
-                Sort.by("rno").descending());
+        Pageable pageable = null;
+
+        if (pageRequestDTO.getPage() == -1){
+            int lastPage = calcLastPage(bno, pageRequestDTO.getSize()); //-1 : 댓글이 없는 경우, 숫자 : 마지막 댓글 페이지
+            if(lastPage <= 0){ //latsPage ==-1 이라면
+                lastPage = 1;
+            }
+            pageRequestDTO.setPage(lastPage);
+        }
+
+        pageable = PageRequest.of(pageRequestDTO.getPage() -1, pageRequestDTO.getSize());
 
         Page<Reply> result = replyRepository.getListByBno(bno, pageable);
 
@@ -40,5 +50,30 @@ public class ReplyServiceImpl implements ReplyService{
         //dtoList.forEach(replyDTO -> log.info(replyDTO));
 
         return new PageResponseDTO<>(pageRequestDTO, (int)result.getTotalElements(), dtoList);
+    }
+
+    private int calcLastPage(Long bno, double size) {
+        int count = replyRepository.getReplyCountOfBoard(bno);
+
+        int lastPage = (int)(Math.ceil(count/size));
+//
+//        if(lastPage ==0){
+//            lastPage = 1;
+//        }
+//        //0부터 시작하는 페이지번호, 사이즈, 소트
+//        return PageRequest.of(lastPage -1,10);
+        return lastPage;
+    }
+
+    @Override
+    public Long register(ReplyDTO replyDTO) {
+
+        //entity에 Board타입으로 되어있어서 Board로 만들어줘야 한다.
+        Board board = Board.builder().bno(replyDTO.getBno()).build();
+
+        Reply reply = modelMapper.map(replyDTO, Reply.class);
+        replyRepository.save(reply);
+
+        return reply.getRno();
     }
 }
