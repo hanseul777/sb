@@ -55,28 +55,32 @@
       </div>
     </div>
   </div>
-  <!-- end card-->
-    <div class="card">
-      <div class="card-header">
+  <!-- end card   -->
 
+  <div class="card">
+    <div class="card-header">
+
+    </div>
+    <div class="card-body">
+      <div class="input-group mb-3">
+        <span class="input-group-text">Replyer</span>
+        <input type="text" name="replyer" class="form-control">
       </div>
-      <div class="card-body">
-        <div class="input-group mb-3">
-          <span class="input-group-text">Replyer</span>
-          <input type="text" name="replyer" class="form-control">
-        </div>
-        <div class="input-group mb-3">
-          <span class="input-group-text">ReplyText</span>
-          <input type="text" name="replyText" class="form-control">
-        </div>
+      <div class="input-group mb-3">
+        <span class="input-group-text">ReplyText</span>
+        <input type="text" name="replyText" class="form-control">
+      </div>
+      <div class="input-group mb-3">
         <button class="btn btn-primary" onclick="registerReply()">Reply Register</button>
       </div>
-      <div class="card-footer">
-
-      </div>
     </div>
+    <div class="card-footer">
+
+    </div>
+  </div>
 
 
+  <!--    reply card-->
   <div class="card">
     <div class="card-header">Replies</div>
     <div class="card-body">
@@ -108,7 +112,6 @@
 
   <script th:inline="javascript">
     function modify(bno){
-
       const page = [[${pageRequestDTO.page}]]
       const size = [[${pageRequestDTO.size}]]
       const type = [[${pageRequestDTO.type}]]
@@ -119,13 +122,10 @@
       if(type && keyword){
         searchQuery += `&type=${type}&keyword=${keyword}`
       }
-
       self.location=`/board/modify?bno=${bno}&page=${page}&size=${size}`+searchQuery
-
     }
 
     function moveList(){
-
       const page = [[${pageRequestDTO.page}]]
       const size = [[${pageRequestDTO.size}]]
       const type = [[${pageRequestDTO.type}]]
@@ -136,88 +136,163 @@
       if(type && keyword){
         searchQuery += `&type=${type}&keyword=${keyword}`
       }
-
       self.location=`/board/list?page=${page}&size=${size}` + searchQuery
-
     }
-
   </script>
 
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
   <script th:inline="javascript">
+    const bno=[[${dto.bno}]]
+    let replyPage = 1
+    let replySize = 10
 
-    const bno = [[${dto.bno}]]
+    function makeListAndPaging(replyPageResponse) {
+      const dtoList=replyPageResponse.dtoList
+      //dtoList는 자바스크립트 배열
 
-    function makeListAndPaging(replyPageResponse){
-
-      const dtoList = replyPageResponse.dtoList
-
+      replyPage = replyPageResponse.page
+      size = replyPageResponse.size
       console.log(dtoList)
 
-      let str = ""
-
+      let str=""
       for (const reply of dtoList) {
         console.log(reply)
-        str += "<li class='list-group-item d-flex justify-content-between align-items-center'>"
-        str += `<div><span>${reply.rno} ---------- ${reply.replyText}</span></div>`
-        str += "</li>"
-
+        str+="<li class='list-group-item d-flex justify-content-between align-items-center'>"
+        str+=`<div class="replyBox" data-rno="${reply.rno}"><span>${reply.rno}</span><span class="rtext">${reply.replyText}</span>
+                      <button class="btn btn-sm btn-warning" onclick="modifyReply(this)">수정</button>
+                      </div>`
+        str+="</li>"
       }
       console.log(str)
-      document.querySelector(".replyUL").innerHTML = str
+      document.querySelector(".replyUL").innerHTML=str
 
-      //paging
-      const pagination = document.querySelector(".pagination")
-      let pageStr = ""
+      //페이징 처리
+      const pagination=document.querySelector(".pagination")
+      let pageStr=""
 
       //prev
-      if(replyPageResponse.prev){
-        pageStr += `<li class="page-item"><a class="page-link" href="javascript:getList(${replyPageResponse.start -1})" tabindex="-1">Previous</a></li>`
+      if(replyPageResponse.prev) {
+        pageStr+=`<li class="page-item"><a class="page-link" href="javascript:getList(${replyPageResponse.start-1})" tabindex="-1">Previous</a></li>`
       }
       //num
-      for(let i = replyPageResponse.start; i<= replyPageResponse.end; i++){
-        pageStr += `<li class="page-item ${i==replyPageResponse.page?"active":""} "><a class="page-link" href="javascript:getList(${i})" tabindex="-1">${i}</a></li>`
+      for(let i=replyPageResponse.start; i<=replyPageResponse.end; i++) {
+        pageStr+=`<li class="page-item ${i==replyPageResponse.page?"active":""}"><a class="page-link" href="javascript:getList(${i})" tabindex="-1">${i}</a></li>`
       }
-      //i==replyPageResponse.page : 현재페이지
-      //"active" : 활성화
-
       //next
-      if(replyPageResponse.next){
-        pageStr += `<li class="page-item"><a class="page-link" href="javascript:getList(${replyPageResponse.end + 1})" tabindex="-1">Next</a></li>`
+      if(replyPageResponse.next) {
+        pageStr+=`<li class="page-item"><a class="page-link" href="javascript:getList(${replyPageResponse.end+1})" tabindex="-1">Next</a></li>`
       }
-
-      pagination.innerHTML = pageStr
+      pagination.innerHTML=pageStr
     }
 
     async function getList(pageNum) {
-
-      const response = await axios.get(`/replies/list/${bno}?page=${pageNum}`)
-      const replyPageResponse = await response.data
+      const response=await axios.get(`/replies/list/${bno}?page=${pageNum}`)
+      //console.log(response)
+      const replyPageResponse=await response.data
       console.log(replyPageResponse)
 
       makeListAndPaging(replyPageResponse)
     }
 
-    function registerReply(){
-      const replyObj = {bno:bno,
-        replyer: document.querySelector("input[name='replyer']").value,
-        replyText: document.querySelector("input[name='replyText']").value
+    function registerReply() {
+      const replyObj={bno:bno,
+        replyer:document.querySelector("input[name='replyer']").value,
+        replyText:document.querySelector("input[name='replyText']").value,
+      }
+      async function registerAjax() {
+        const response=await axios.post("/replies", replyObj)
+        const replyPageResponse=await response.data
+        makeListAndPaging(replyPageResponse)
+        document.querySelector("input[name='replyer']").value=""
+        document.querySelector("input[name='replyText']").value=""
+        //댓글 등록하고 등록창에 적은 내용 지워지게
+      }
+      registerAjax();
+    }
+
+    let cloneReply = null
+    let targetLi = null
+
+    function modifyReply(ele) {
+      console.log(ele) //this값 확인 -> button
+
+      const targetDiv = ele.closest(".replyBox")
+      // button의 상위 div -> 이 부분을 복사 -> 수정을 누르면 modify / 취소를 누르면 cloneReply로 대체(원복)
+      const currentTargetLi = ele.closest("li")
+
+      if (targetLi === null) {
+        targetLi = currentTargetLi
+      } else if (targetLi !== currentTargetLi) {
+        //alert("기존의 댓글 수정 강제 취소")
+        targetLi.querySelector("div").remove()
+        targetLi.appendChild(cloneReply)
+
+        targetLi = currentTargetLi
       }
 
-      async function registerAjx(){
-        const response = await axios.post("/replies",replyObj)
+      cloneReply = targetDiv.cloneNode(true)
+      //true: 안쪽 내용물까지 전체 복사
+      //댓글의 번호와 댓글 원본 내용을 클론
+
+      const replyText = targetDiv.querySelector(".rtext").innerHTML
+      const rno = targetDiv.getAttribute("data-rno")
+      //console.log(rno, replyText)
+
+      const modifyForm = `<div><input type="text" class="editText" value="${replyText}">
+                                <button onclick="modifyReplySend(this)">수정</button>
+                                <button onclick="deleteReply(this)">삭제</button>
+                                <button onclick="cancelModifyReply(this)">취소</button></div>`
+
+      targetLi.innerHTML = modifyForm
+    }
+
+    function cancelModifyReply(ele){
+      //targetLi의 안쪽 elemement 삭제
+      ele.closest("div").remove()
+
+      //targetLi.innerHTML = "<div>" + cloneReply.innerHTML
+      //innerHTML을 사용하면 안의 내용물만 가져 오기 때문에 div가 사라짐
+
+      targetLi.appendChild(cloneReply)
+    }
+
+    function deleteReply(){
+      const rno = cloneReply.getAttribute("data-rno")
+
+      async function sendDeleteReply() {
+        const response = await axios.delete(`/replies/${bno}/${rno}?page=${replyPage}&size=${replySize}`)
         const replyPageResponse = await response.data
-        //데이터 가져오기
+
+        alert("댓글이 삭제되었습니다.")
+        console.log(replyPageResponse)
+
         makeListAndPaging(replyPageResponse)
-        document.querySelector("input[name='replyer']").value =""
-        document.querySelector("input[name='replyText']").value =""
       }
-      //호출
-      registerAjx();
+      sendDeleteReply()
+    }
+
+    function modifyReplySend(ele){
+      const rno = cloneReply.getAttribute("data-rno")
+      const replyText = document.querySelector(".editText").value
+
+      //{rno:rno, replyText:replyText} <-키와 값이 똑같이 반복돼서 obj로 묶어 사용해 줌
+      const replyObj = {rno, replyText, bno}
+
+      async function updateReply(){
+
+        const response = await axios.put(`/replies/${bno}/${rno}?page=${replyPage}&size=${replySize}`, replyObj)
+        const replyPageResponse = await response.data
+
+        alert("수정 완.")
+        console.log(replyPageResponse)
+
+        makeListAndPaging(replyPageResponse)
+      }
+      updateReply()
     }
 
     getList(-1)
-
   </script>
+
 </th:block>
