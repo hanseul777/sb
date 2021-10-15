@@ -32,4 +32,13 @@ public class ReplyContorller {
 
         return replyService.getListOfBoard(replyDTO.getBno(), pageRequestDTO);
     }
+
+    @DeleteMapping("/{bno}/{rno}")
+    public PageResponseDTO<ReplyDTO> remove(
+            @PathVariable("bno") Long bno,
+            @PathVariable("rno") Long rno,
+            PageRequestDTO requestDTO ){
+
+        return replyService.remove(bno, rno, requestDTO);
+    }
 }

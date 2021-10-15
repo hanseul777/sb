@@ -76,4 +76,12 @@ public class ReplyServiceImpl implements ReplyService{
 
         return reply.getRno();
     }
+
+    @Override
+    public PageResponseDTO<ReplyDTO> remove(Long bno, Long rno, PageRequestDTO pageRequestDTO) {
+
+        replyRepository.deleteById(rno);
+
+        return getListOfBoard(bno, pageRequestDTO);
+    }
 }
