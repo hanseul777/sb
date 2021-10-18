@@ -84,4 +84,16 @@ public class ReplyServiceImpl implements ReplyService{
 
         return getListOfBoard(bno, pageRequestDTO);
     }
+
+    @Override
+    public PageResponseDTO<ReplyDTO> modify(ReplyDTO replyDTO, PageRequestDTO pageRequestDTO) {
+
+        Reply reply = replyRepository.findById(replyDTO.getRno()).orElseThrow();
+
+        reply.setText(replyDTO.getReplyText());
+
+        replyRepository.save(reply);
+
+        return getListOfBoard(replyDTO.getBno(), pageRequestDTO);
+    }
 }

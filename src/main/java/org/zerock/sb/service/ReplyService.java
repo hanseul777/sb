@@ -13,4 +13,6 @@ public interface ReplyService {
     Long register(ReplyDTO replyDTO);
 
     PageResponseDTO<ReplyDTO> remove(Long bno, Long rno, PageRequestDTO pageRequestDTO);
+
+    PageResponseDTO<ReplyDTO> modify(ReplyDTO replyDTO, PageRequestDTO pageRequestDTO);
 }
