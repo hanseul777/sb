@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@ToString(exclude = {"diary","memeber"})
+@ToString(exclude = {"diary","member"})
 public class Favorite {
 
     @Id

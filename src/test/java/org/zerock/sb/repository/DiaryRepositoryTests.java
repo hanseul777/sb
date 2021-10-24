@@ -163,21 +163,21 @@ public class DiaryRepositoryTests {
         diaryRepository.save(diary);
     }
 
-//    @Test
-//    public void testWithFavorite(){
-//
-//        Pageable pageable = PageRequest.of(0,10,Sort.by("dno").descending());
-//        Page<Object[]> result = diaryRepository.findWithFavoriteCount(pageable);
-//
-//        for (Object[] objects : result.getContent()){
-//            log.info(Arrays.toString(objects));
-//        }
-//    }
+    @Test
+    public void testWithFavorite(){
 
-//    @Test
-//    public void testListHard(){
-//        Pageable pageable = PageRequest.of(0,10, Sort.by("dno").descending());
-//
-//        diaryRepository.getSearchList(pageable);
-//    }
+        Pageable pageable = PageRequest.of(0,10,Sort.by("dno").descending());
+        Page<Object[]> result = diaryRepository.findWithFavoriteCount(pageable);
+
+        for (Object[] objects : result.getContent()){
+            log.info(Arrays.toString(objects));
+        }
+    }
+
+    @Test
+    public void testListHard(){
+        Pageable pageable = PageRequest.of(0,10, Sort.by("dno").descending());
+
+        diaryRepository.getSearchList(pageable);
+    }
 }
