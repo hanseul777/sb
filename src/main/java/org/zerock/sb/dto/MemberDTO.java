@@ -57,5 +57,5 @@ public class MemberDTO implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-}
 
+}

@@ -13,12 +13,12 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name="tbl_diary")
+@Table(name = "tbl_diary")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@ToString(exclude = {"tags","pictures"})
+@ToString(exclude = {"tags", "pictures"})
 public class Diary {
 
     @Id
@@ -31,10 +31,10 @@ public class Diary {
 
     private String writer;
 
-    @CreationTimestamp //등록 수정시간 자동으로 관리
+    @CreationTimestamp//시간이 자동으로 관리(Hibernate 기능)
     private LocalDateTime regDate;
 
-    @UpdateTimestamp
+    @UpdateTimestamp//시간이 자동으로 관리(Hibernate 기능)
     private LocalDateTime modDate;
 
     @ElementCollection(fetch = FetchType.LAZY)//종속적인관계에서 사용
@@ -43,7 +43,7 @@ public class Diary {
     @BatchSize(size = 50)
     //private List<String> tags; //list는 중복적인 데이터가 발생할 수 있어서 list로 설정
     @Builder.Default
-    private Set<String> tags = new HashSet<>();
+    private Set<String> tags=new HashSet<>();
 
     @ElementCollection(fetch = FetchType.LAZY) // 종속관계에서 사용
     @CollectionTable(name = "tbl_diary_picture")

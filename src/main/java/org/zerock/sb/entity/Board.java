@@ -28,16 +28,16 @@ public class Board {
 
     private String writer;
 
-    @CreationTimestamp //등록 수정시간 자동으로 관리해주기
+    @CreationTimestamp//시간이 자동으로 관리(Hibernate 기능)
     private LocalDateTime regDate;
 
-    @UpdateTimestamp
+    @UpdateTimestamp//시간이 자동으로 관리(Hibernate 기능)
     private LocalDateTime modDate;
 
     //제목과 내용을 한 번에 갱신, 수정 할 수 있는 메서드를 생성
-    public void change(String title, String content){
-        this.title = title;
-        this.content = content;
+    public void change(String title, String content) {
+        this.title=title;
+        this.content=content;
     }
 
 }

@@ -10,8 +10,9 @@ import org.zerock.sb.dto.PageRequestDTO;
 import org.zerock.sb.dto.PageResponseDTO;
 import org.zerock.sb.service.BoardService;
 
-@RestController // 목적이 controller라서 처음부터 restcontroller로 생성
-@RequestMapping("/api/")
+// 목적이 controller라서 처음부터 restcontroller로 생성
+@RestController
+@RequestMapping("/api")
 @RequiredArgsConstructor
 @Log4j2
 public class ApiController {
@@ -21,9 +22,14 @@ public class ApiController {
     private final BoardService boardService;
 
     @GetMapping("/board/list")
-    public PageResponseDTO<BoardDTO> getList(PageRequestDTO pageRequestDTO){
+    public PageResponseDTO<BoardDTO> getList(PageRequestDTO pageRequestDTO) {
+        log.info("pageRequestDTO: "+ pageRequestDTO);
 
-        log.info("pageRequestDTO: " + pageRequestDTO);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         return boardService.getList(pageRequestDTO);
     }

@@ -13,38 +13,41 @@ import org.zerock.sb.dto.BoardDTO;
 import org.zerock.sb.dto.PageRequestDTO;
 import org.zerock.sb.service.BoardService;
 
-@Controller
+@Controller//알아서 bean을 인식하니까 별도로 안 만들어도 됨
 @Log4j2
 @RequiredArgsConstructor
 @RequestMapping("/board")
 public class BoardController {
+
     private final BoardService boardService;
 
     @GetMapping("/list")
-    public void list(PageRequestDTO pageRequestDTO, Model model){
+    //(value = {"","/list"})//value 쓰면 board로 들어 와도 list가 나옴
+    public void list(PageRequestDTO pageRequestDTO, Model model) {
 
-//        model.addAttribute("responseDTO",boardService.getList(pageRequestDTO));
-        model.addAttribute("responseDTO",boardService.getListWithReplyCount(pageRequestDTO));
+        //model.addAttribute("responseDTO", boardService.getList(pageRequestDTO));
+        model.addAttribute("responseDTO", boardService.getListWithReplyCount(pageRequestDTO));
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/register")
-    public void register(){
-
+    public void register() {
     }
 
     @PostMapping("/register")
-    public String registerPost(BoardDTO boardDTO, RedirectAttributes redirectAttributes){
+    public String registerPost(BoardDTO boardDTO, RedirectAttributes redirectAttributes) {
+    //redirect가 문자열이니까 String으로 써야 함
 
-        Long bno = boardService.register(boardDTO);
-        redirectAttributes.addFlashAttribute("result",bno);
+        Long bno=boardService.register(boardDTO);
+        redirectAttributes.addFlashAttribute("result", bno);
 
         return "redirect:/board/list";
     }
 
     @GetMapping("/read")
-    public void read(Long bno, PageRequestDTO pageRequestDTO, Model model){
+    public void read(Long bno, PageRequestDTO pageRequestDTO, Model model) {
+        //list로 돌아가기 위해서는 page 정보를 갖고 있어야 해서 PageRequestDTO도 필요
 
-        model.addAttribute("dto",boardService.read(bno));
+        model.addAttribute("dto", boardService.read(bno));
     }
 }

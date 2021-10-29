@@ -49,17 +49,17 @@ public class CustomSecurityConfig  extends WebSecurityConfigurerAdapter {
         return new TokenCheckFilter(jwtUtil());
     }
 
+    //토큰검증
+    @Bean
+    public JWTUtil jwtUtil() {
+        return new JWTUtil();
+    }
+
     @Bean
     public TokenGenerateFilter tokenGenerateFilter()throws Exception{
         // 생성자가 두 개 들어가야한다. 하나는 문자열 : 로그인하는 경로(내부적으로 인증처리)
         //authenticationManager() : 이미 가지고 있던 인증 매니저
         // /jsonApiLogin으로 제이슨 데이터를 보냈을 때 필터가 작동하는지 확인하기 위해 필터도 스프링의 필터 목록에도 추가해야 한다.
         return new TokenGenerateFilter("/jsonApiLogin", authenticationManager(), jwtUtil() );
-    }
-
-    //토큰검증
-    @Bean
-    public JWTUtil jwtUtil() {
-        return new JWTUtil();
     }
 }

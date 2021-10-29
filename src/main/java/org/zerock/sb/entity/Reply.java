@@ -11,10 +11,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@ToString(exclude = "board")//연관관계를 걸어줄 때는 ToString은 제외를 걸어줘야 한다!
+@ToString(exclude = "board")
 public class Reply {
 
-    @Id
+    @Id//entity이기 때문에 id 안 쓰면 에러 남
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long rno;
 
@@ -24,6 +24,7 @@ public class Reply {
 
     //reply가져올 때 board도 가져와야 하고 꼭 lazy(지연로딩 : 단방향으로 주기위해 사용한다.)로 걸어야한다.
     @ManyToOne(fetch = FetchType.LAZY)
+    //이걸 안 쓰면 JPA가 게시글과 댓글 관계를 몰라서 에러 남, 설명해 줘야 함
     private Board board;
 
     @CreationTimestamp

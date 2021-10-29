@@ -11,10 +11,11 @@ import java.util.List;
 
 public interface DiaryRepository extends JpaRepository<Diary, Long>, DiarySearch {
 
-    @Query("select d from Diary d left join d.tags dt where dt like concat('%', :tag, '%') ")
+    @Query("select d from Diary d left join d.tags dt where dt like concat('%',:tag,'%')")
     Page<Diary> searchTags(String tag, Pageable pageable);
 
-    @Query("select d, coalesce( sum(f.score),0) from Diary d left join Favorite f on f.diary = d group by d ")
+    @Query("select d, coalesce(sum(f.score), 0) from Diary d left join Favorite f on f.diary=d group by d ")
+        //List<Object[]> findWithFavoriteCount();
     Page<Object[]> findWithFavoriteCount(Pageable pageable);
     //coalesce() : null이면 0으로 출력하는 것(if null이면 0으로 출력)
 }

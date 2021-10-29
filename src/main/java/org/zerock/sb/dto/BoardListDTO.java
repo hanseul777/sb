@@ -22,4 +22,5 @@ public class BoardListDTO {
     private LocalDateTime regDate;
 
     private long replyCount;
+
 }

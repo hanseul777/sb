@@ -6,7 +6,6 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -25,10 +24,10 @@ public class Member {
     private String mname;
 
     @ElementCollection(fetch = FetchType.LAZY)
-    @Builder.Default
-    private Set<MemberRole> roleSet = new HashSet<>();
+    //@Builder.Default
+    private Set<MemberRole> roleSet;
 
-    public void changePassword(String password){
-        this.mpw = password;
+    public void changePassword(String password) {
+        this.mpw=password;
     }
 }

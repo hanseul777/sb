@@ -27,7 +27,7 @@ public class TokenGenerateFilter extends AbstractAuthenticationProcessingFilter 
 
     public TokenGenerateFilter(String defaultFilterProcessesUrl, AuthenticationManager authenticationManager, JWTUtil jwtUtil) {
         super(defaultFilterProcessesUrl, authenticationManager);
-        this.jwtUtil = jwtUtil;
+        this.jwtUtil=jwtUtil;
     }
 
     //인증시도
@@ -36,9 +36,8 @@ public class TokenGenerateFilter extends AbstractAuthenticationProcessingFilter 
 
         String requestStr = extracted(request); //request 들어오는 정보를 json으로 만들어준다.
 
-        log.info("try to login with json for api ...................");
+        log.info("try to login with json for api..........");
         log.info(requestStr);
-
         JSONObject jObject = new JSONObject(requestStr);
 
         //로그인할 때 보내는 정보 => 내부적으로 로그인이 이루어진다.
@@ -59,7 +58,7 @@ public class TokenGenerateFilter extends AbstractAuthenticationProcessingFilter 
 
     private String extracted(HttpServletRequest request)  {
         InputStream inputStream = null;
-        java.io.ByteArrayOutputStream bos = null;
+        ByteArrayOutputStream bos = null;
 
         try {
             inputStream = request.getInputStream();
@@ -104,22 +103,20 @@ public class TokenGenerateFilter extends AbstractAuthenticationProcessingFilter 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         log.info("successfulAuthentication: " + authResult);
-
         MemberDTO memberDTO = (MemberDTO) authResult.getPrincipal();
 
-        //내가 원하는 정보만 추출해서 토큰생성 후 json으로 보내주기
-        String mid = memberDTO.getMid();
+        //내가 원하는 정보(MemberDTO 정보)만 추출해서 토큰생성 후 json으로 보내주기
+        String mid=memberDTO.getMid();
+        log.info("MEMBER MID: "+mid);
 
-        log.info("MEMBER MID: " + mid);
-
-        //토큰생성
-        String token = jwtUtil.generateToken(mid);
+        //mid 값을 이용해서 토큰생성
+        String token=jwtUtil.generateToken(mid);
 
         //보내주는 부분 : JSONObjectd에서 키, 값 바로 설정해주는 Map.of 사용
         JSONObject res = new JSONObject(Map.of("ACCESS", token));
 
         response.setContentType("application/json");
-        PrintWriter out  = response.getWriter();
+        PrintWriter out = response.getWriter();
         out.println(res.toString());
         out.close();
 

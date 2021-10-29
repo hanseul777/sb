@@ -21,25 +21,24 @@ import java.util.stream.Collectors;
 @Service
 @Log4j2
 @RequiredArgsConstructor
-public class ReplyServiceImpl implements ReplyService{
+public class ReplyServiceImpl implements ReplyService {
 
     private final ModelMapper modelMapper;
     private final ReplyRepository replyRepository;
 
     @Override
     public PageResponseDTO<ReplyDTO> getListOfBoard(Long bno, PageRequestDTO pageRequestDTO) {
-
-        Pageable pageable = null;
-
-        if (pageRequestDTO.getPage() == -1){
-            int lastPage = calcLastPage(bno, pageRequestDTO.getSize()); //-1 : 댓글이 없는 경우, 숫자 : 마지막 댓글 페이지
-            if(lastPage <= 0){ //latsPage ==-1 이라면
-                lastPage = 1;
+        Pageable pageable=null;
+        if(pageRequestDTO.getPage()==-1) {
+            //pageable=calcLastPage(bno);
+            int lastPage=calcLastPage(bno, pageRequestDTO.getSize());//댓글 없으면 -1 나옴, 댓글 있으면 마지막 댓글 페이지가 나옴
+            if(lastPage<=0) {
+                lastPage=1;
             }
-            pageRequestDTO.setPage(lastPage);
+            pageRequestDTO.setPage(lastPage);//-1일 때 1로 바꿔 줌
         }
 
-        pageable = PageRequest.of(pageRequestDTO.getPage() -1, pageRequestDTO.getSize());
+        pageable=PageRequest.of(pageRequestDTO.getPage()-1, pageRequestDTO.getSize());
 
         Page<Reply> result = replyRepository.getListByBno(bno, pageable);
 
@@ -52,48 +51,41 @@ public class ReplyServiceImpl implements ReplyService{
         return new PageResponseDTO<>(pageRequestDTO, (int)result.getTotalElements(), dtoList);
     }
 
-    private int calcLastPage(Long bno, double size) {
-        int count = replyRepository.getReplyCountOfBoard(bno);
-
-        int lastPage = (int)(Math.ceil(count/size));
-//
-//        if(lastPage ==0){
-//            lastPage = 1;
-//        }
-//        //0부터 시작하는 페이지번호, 사이즈, 소트
-//        return PageRequest.of(lastPage -1,10);
-        return lastPage;
-    }
-
     @Override
     public Long register(ReplyDTO replyDTO) {
 
-        //entity에 Board타입으로 되어있어서 Board로 만들어줘야 한다.
-        Board board = Board.builder().bno(replyDTO.getBno()).build();
-
-        Reply reply = modelMapper.map(replyDTO, Reply.class);
+        //Board board=Board.builder().bno(replyDTO.getBno()).build();
+        Reply reply=modelMapper.map(replyDTO, Reply.class); //replyDTO를 reply로 변환
+        //log.info(reply); //현재 board는 null: Long 타입의 bno밖에 없어서 변환이 안 될 것
+        //log.info(reply.getBoard());
         replyRepository.save(reply);
-
         return reply.getRno();
     }
 
     @Override
     public PageResponseDTO<ReplyDTO> remove(Long bno, Long rno, PageRequestDTO pageRequestDTO) {
-
         replyRepository.deleteById(rno);
-
         return getListOfBoard(bno, pageRequestDTO);
     }
 
     @Override
     public PageResponseDTO<ReplyDTO> modify(ReplyDTO replyDTO, PageRequestDTO pageRequestDTO) {
-
         Reply reply = replyRepository.findById(replyDTO.getRno()).orElseThrow();
-
         reply.setText(replyDTO.getReplyText());
-
         replyRepository.save(reply);
-
         return getListOfBoard(replyDTO.getBno(), pageRequestDTO);
+    }
+
+    //private Pageable calcLastPage(Long bno) {
+    private int calcLastPage(Long bno, double size) {
+        //특정 게시글의 댓글 총 개수를 가지고 마지막 페이지 계산하는 메소드
+        int count = replyRepository.getReplyCountOfBoard(bno);
+        int lastPage = (int) (Math.ceil(count / size));
+
+//        if(lastPage==0) {//댓글이 0일 때 마지막 페이지 값에 1을 주면 아래에서 1 빼면 0이 나와서 문제 안 생김
+//            lastPage=1;
+//        }
+        //return PageRequest.of(lastPage-1, 10);
+        return lastPage;
     }
 }

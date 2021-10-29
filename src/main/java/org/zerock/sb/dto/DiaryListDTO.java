@@ -25,5 +25,5 @@ public class DiaryListDTO {
     private List<String> tags;
     private List<DiaryPictureDTO> pictures;
 
-    private int totalScore;
+    private int totalScore;//좋아요, 싫어요 합친 개수
 }

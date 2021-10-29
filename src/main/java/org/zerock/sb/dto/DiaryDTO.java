@@ -23,8 +23,10 @@ public class DiaryDTO {
     private String writer;
 
     private LocalDateTime regDate;
+
     private LocalDateTime modDate;
 
     private List<String> tags;
     private List<DiaryPictureDTO> pictures;
+
 }

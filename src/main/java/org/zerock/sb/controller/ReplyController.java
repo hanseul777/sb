@@ -12,7 +12,7 @@ import org.zerock.sb.service.ReplyService;
 @RequiredArgsConstructor
 @Log4j2
 @RequestMapping("/replies")
-public class ReplyContorller {
+public class ReplyController {
 
     private final ReplyService replyService;
 
@@ -23,13 +23,12 @@ public class ReplyContorller {
     }
 
     @PostMapping("") //마지막페이지를 반환해주기위해 타입은 pageResponseDTO , JSON으로 받기 위해 @RequestBody
-    public PageResponseDTO<ReplyDTO> register(@RequestBody ReplyDTO replyDTO){
-
+    public PageResponseDTO<ReplyDTO> register(@RequestBody ReplyDTO replyDTO) {
         replyService.register(replyDTO);
 
         //최신페이지로 설정해줌
-        PageRequestDTO pageRequestDTO = PageRequestDTO.builder().page(-1).build();
-
+        PageRequestDTO pageRequestDTO=PageRequestDTO.builder().page(-1).build();
+        //-1을 넣어야 마지막 페이지 나옴
         return replyService.getListOfBoard(replyDTO.getBno(), pageRequestDTO);
     }
 
@@ -38,7 +37,6 @@ public class ReplyContorller {
             @PathVariable("bno") Long bno,
             @PathVariable("rno") Long rno,
             PageRequestDTO requestDTO ){
-
         return replyService.remove(bno, rno, requestDTO);
     }
 
