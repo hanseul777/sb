@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/layout2">
+
+<div class="card" layout:fragment="content">
+
+    <div class="card">
+        <div class="card-header">
+            Diary Read
+        </div>
+        <div class="card-body">
+            <div class="input-group mb-3">
+                <span class="input-group-text">Dno</span>
+                <input type="text" name="dno" class="form-control" readonly
+                       th:value="${dto.dno}"  >
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text">Title</span>
+                <input type="text" name="title" class="form-control" readonly
+                       th:value="${dto.title}"   >
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text">Writer</span>
+                <input type="text" name="writer" class="form-control"  readonly
+                       th:value="${dto.writer}">
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text">RegDate</span>
+                <input type="text" name="regDate" class="form-control" readonly
+                       th:value="${#temporals.format(dto.regDate, 'yyyy/MM/dd HH:mm:ss')}" >
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text">ModDate</span>
+                <input type="text" name="modDate" class="form-control" readonly
+                       th:value="${#temporals.format(dto.modDate, 'yyyy/MM/dd HH:mm:ss')}">
+            </div>
+
+            <div class="input-group">
+                <span class="input-group-text">Content</span>
+                <textarea class="form-control" aria-label="With textarea" name="content" rows="4">[[${dto.content}]]</textarea>
+            </div>
+
+            <div class="my-4">
+                <div class="my-4">
+                    <div class="float-end">
+                        <button type="button" class="btn btn-primary">Modify</button>
+                        <button type="button" class="btn btn-secondary">List</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- end card   -->
+
+    <div class="card">
+        <div class="card-header">
+
+        </div>
+
+        <div class="card-footer">
+
+        </div>
+    </div>
+
+</div>
