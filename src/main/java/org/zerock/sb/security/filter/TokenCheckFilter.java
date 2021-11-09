@@ -33,7 +33,7 @@ public class TokenCheckFilter extends OncePerRequestFilter {
         String path=request.getRequestURI();//어떤 경로를 호출하려는지 알아내는 것
         log.info(path);
 
-        if(path.startsWith("/api/")){
+        if(path.startsWith("/api22/")){
             // /api/ 시작하는 경로로 들어 오면 토큰을 확인해라: 그 정보 중에 Authorization 값을 끄집어 냄
             //Authorization 정보가 없으면 막아야 함
             //check token : request로 들어온 정보중에 header에 authorization이 있는지 확인
